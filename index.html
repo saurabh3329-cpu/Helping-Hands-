@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Helping Hands Kasganj | आर्थिक सहयोग</title>
+<style>
+:root{--navy:#12305a;--blue:#1c5c9e;--gold:#f3b72d;--bg:#f4f7fb;--text:#172334;--muted:#617083;--line:#dce4ee}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,var(--navy),var(--blue));color:white;padding:22px 16px;text-align:center;border-bottom:5px solid var(--gold)}
+header h1{margin:0;font-size:clamp(1.4rem,4vw,2rem)}header p{margin:8px 0 0}
+main{max-width:1100px;margin:20px auto;padding:0 14px 36px}
+.notice{background:#fff8df;border:1px solid #f1d47a;padding:12px 14px;border-radius:12px;margin-bottom:16px;font-size:.92rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.toolbar input,.toolbar select,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:9px;font:inherit;background:white}
+.toolbar input{flex:1;min-width:200px}.toolbar select{width:auto;min-width:150px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:14px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 4px 16px #183b5b0b}
+.card button.profile-open{border:0;background:none;text-align:left;width:100%;padding:0;cursor:pointer;color:inherit;font:inherit}
+.photo{height:210px;background:#e7edf5;display:flex;align-items:center;justify-content:center;color:#64748b;overflow:hidden}
+.photo img{width:100%;height:100%;object-fit:cover}.cardbody{padding:14px}.card h3{margin:0 0 5px;font-size:1.12rem}.sub{color:var(--muted);font-size:.9rem}.amount{font-size:1.18rem;font-weight:800;color:#12633d;margin-top:9px}
+.btn{border:0;border-radius:9px;padding:10px 14px;background:var(--blue);color:white;font:inherit;cursor:pointer}.btn.secondary{background:#e8eef7;color:var(--navy)}.btn.danger{background:#a92727}.btn:disabled{opacity:.5;cursor:not-allowed}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:16px;margin:16px 0}.hidden{display:none!important}
+.detail-head{display:grid;grid-template-columns:minmax(180px,300px) 1fr;gap:18px;align-items:start}.detail-photo{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px;background:#e7edf5}
+.details{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:12px}.detailitem{background:#f6f8fb;border:1px solid #e3e9f1;padding:10px;border-radius:9px}.detailitem b{display:block;color:#506176;font-size:.82rem;margin-bottom:4px}
+table{width:100%;border-collapse:collapse;background:white}th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}th{background:#edf3fa}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.field label{display:block;font-weight:650;font-size:.9rem;margin-bottom:5px}.field small{color:var(--muted)}
+.checkrow{display:flex;gap:12px;flex-wrap:wrap}.checkrow label{display:flex;gap:6px;align-items:center;font-size:.9rem}
+.adminbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.status{color:var(--muted);font-size:.9rem}.empty{padding:24px;text-align:center;color:var(--muted);background:white;border-radius:12px}
+footer{text-align:center;color:var(--muted);padding:20px}
+@media(max-width:650px){.detail-head{grid-template-columns:1fr}.detail-photo{max-height:300px}.toolbar select{width:100%}th,td{padding:8px;font-size:.9rem}}
+</style>
+</head>
+<body>
+<header><h1>Helping Hands Kasganj</h1><p>आर्थिक सहयोग • पारदर्शिता • मानवता</p></header>
+<main>
+<div class="notice"><b>महत्वपूर्ण:</b> सार्वजनिक वेबसाइट पर मोबाइल नंबर, बैंक खाता और UPI ID दिखाने से पहले संबंधित व्यक्ति की स्पष्ट अनुमति लें। नीचे इन विवरणों को सार्वजनिक रूप से दिखाने के विकल्प अलग रखे गए हैं।</div>
+<div class="toolbar">
+  <input id="searchBox" placeholder="नाम या पता खोजें…" aria-label="नाम या पता खोजें">
+  <select id="campaignFilter"><option value="">सभी अभियान</option><option value="general">सामान्य आर्थिक सहयोग</option><option value="diwali">दीपावली सहायता</option></select>
+  <button class="btn secondary" id="homeBtn">सभी लाभार्थी</button>
+</div>
+<section id="listView">
+  <h2>आर्थिक सहयोग प्राप्त करने वाले व्यक्ति</h2>
+  <p class="sub">किसी व्यक्ति के कार्ड पर क्लिक करके उसकी जानकारी और सहयोग करने वालों की सूची देखें।</p>
+  <div id="beneficiaryGrid" class="grid"></div>
+  <div id="listEmpty" class="empty hidden">अभी कोई लाभार्थी रिकॉर्ड उपलब्ध नहीं है।</div>
+</section>
+
+<section id="detailView" class="panel hidden">
+  <button class="btn secondary" id="backBtn">← सूची पर वापस</button>
+  <div id="beneficiaryDetail"></div>
+  <h3>जिन लोगों ने आर्थिक सहयोग किया</h3>
+  <div class="tablewrap"><table><thead><tr><th>सहयोगकर्ता का नाम</th><th>क्षेत्र/पता</th><th>राशि</th><th>तारीख</th></tr></thead><tbody id="donorRows"></tbody></table></div>
+  <p id="donorEmpty" class="sub hidden">इस लाभार्थी के लिए सहयोग रिकॉर्ड अभी नहीं जोड़ा गया है।</p>
+</section>
+
+<section class="panel" id="adminPanel">
+  <h2>एडमिन पैनल</h2>
+  <p class="sub">रिकॉर्ड जोड़ने/बदलने के लिए Supabase में अधिकृत एडमिन के रूप में साइन इन करें। सार्वजनिक दर्शक केवल रिकॉर्ड देख सकते हैं।</p>
+  <div id="signedOut">
+    <div class="formgrid">
+      <div class="field"><label for="adminEmail">एडमिन ईमेल</label><input id="adminEmail" type="email" autocomplete="username"></div>
+      <div class="field"><label for="adminPassword">पासवर्ड</label><input id="adminPassword" type="password" autocomplete="current-password"></div>
+    </div>
+    <p><button class="btn" id="loginBtn">एडमिन लॉगिन</button> <span class="status" id="loginStatus"></span></p>
+  </div>
+  <div id="signedIn" class="hidden">
+    <div class="adminbar"><b>एडमिन लॉगिन है</b><button class="btn secondary" id="logoutBtn">लॉगआउट</button></div>
+    <hr>
+    <h3>लाभार्थी की जानकारी</h3>
+    <form id="beneficiaryForm">
+      <input type="hidden" id="beneficiaryId">
+      <div class="formgrid">
+        <div class="field"><label for="beneficiaryName">नाम *</label><input id="beneficiaryName" required maxlength="120"></div>
+        <div class="field"><label for="fatherName">पिता/पति का नाम</label><input id="fatherName" maxlength="120"></div>
+        <div class="field"><label for="address">पूरा पता</label><input id="address" maxlength="300"></div>
+        <div class="field"><label for="mobile">मोबाइल नंबर</label><input id="mobile" inputmode="tel" maxlength="30"></div>
+        <div class="field"><label for="accountNo">बैंक खाता नंबर</label><input id="accountNo" maxlength="60" autocomplete="off"></div>
+        <div class="field"><label for="upiId">UPI ID</label><input id="upiId" maxlength="120" autocomplete="off"></div>
+        <div class="field"><label for="area">क्षेत्र/ब्लॉक/जनपद</label><input id="area" maxlength="120"></div>
+        <div class="field"><label for="campaign">अभियान *</label><select id="campaign" required><option value="general">सामान्य आर्थिक सहयोग</option><option value="diwali">दीपावली सहायता</option></select></div>
+        <div class="field"><label for="beneficiaryPhoto">लाभार्थी का फोटो</label><input id="beneficiaryPhoto" type="file" accept="image/*"><small>एक व्यक्ति की साफ फोटो चुनें।</small></div>
+      </div>
+      <p><b>सार्वजनिक प्रोफाइल पर कौन-सी जानकारी दिखानी है?</b></p>
+      <div class="checkrow">
+        <label><input type="checkbox" id="showMobile"> मोबाइल दिखाएँ</label>
+        <label><input type="checkbox" id="showAccount"> बैंक खाता दिखाएँ</label>
+        <label><input type="checkbox" id="showUpi"> UPI ID दिखाएँ</label>
+      </div>
+      <p class="sub">इन विकल्पों को तभी चुनें जब लाभार्थी ने सार्वजनिक रूप से दिखाने की स्पष्ट अनुमति दी हो। फोटो अपलोड करने की अनुमति भी लें।</p>
+      <p><button class="btn" type="submit" id="saveBeneficiaryBtn">लाभार्थी सेव करें</button> <button class="btn secondary" type="button" id="resetBeneficiaryBtn">फॉर्म साफ करें</button> <span class="status" id="beneficiaryStatus"></span></p>
+    </form>
+    <hr>
+    <h3>आर्थिक सहयोग की एंट्री</h3>
+    <form id="contributionForm">
+      <div class="formgrid">
+        <div class="field"><label for="contributionBeneficiary">लाभार्थी *</label><select id="contributionBeneficiary" required><option value="">लाभार्थी चुनें</option></select></div>
+        <div class="field"><label for="contributorName">सहयोगकर्ता का नाम *</label><input id="contributorName" required maxlength="120"></div>
+        <div class="field"><label for="contributorArea">सहयोगकर्ता का क्षेत्र/पता</label><input id="contributorArea" maxlength="120"></div>
+        <div class="field"><label for="contributionAmount">सहयोग राशि (₹) *</label><input id="contributionAmount" type="number" min="1" step="1" required></div>
+        <div class="field"><label for="contributionDate">तारीख</label><input id="contributionDate" type="date"></div>
+      </div>
+      <p><button class="btn" type="submit">सहयोग रिकॉर्ड जोड़ें</button> <span class="status" id="contributionStatus"></span></p>
+    </form>
+    <hr>
+    <h3>फोटो गैलरी</h3>
+    <form id="galleryForm">
+      <div class="formgrid">
+        <div class="field"><label for="galleryPhoto">फोटो चुनें *</label><input id="galleryPhoto" type="file" accept="image/*" required></div>
+        <div class="field"><label for="galleryCaption">फोटो का विवरण</label><input id="galleryCaption" maxlength="200" placeholder="जैसे: राशन किट वितरण"></div>
+      </div>
+      <p><button class="btn" type="submit">गैलरी में फोटो जोड़ें</button> <span class="status" id="galleryStatus"></span></p>
+    </form>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>सहायता वितरण फोटो गैलरी</h2>
+  <div id="galleryGrid" class="grid"></div>
+  <div id="galleryEmpty" class="empty hidden">अभी गैलरी में कोई फोटो नहीं है।</div>
+</section>
+</main>
+<footer>Helping Hands Kasganj • सहायता का रिकॉर्ड जिम्मेदारी और लाभार्थी की सहमति के साथ प्रकाशित करें।</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// GitHub Pages में publish करने से पहले अपनी Supabase Project URL और anon/public key भरें.
+// कभी भी service_role key यहाँ न डालें.
+const SUPABASE_URL = 'PASTE_SUPABASE_PROJECT_URL_HERE';
+const SUPABASE_ANON_KEY = 'PASTE_SUPABASE_ANON_PUBLIC_KEY_HERE';
+const CONFIGURED = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes('PASTE_');
+const db = CONFIGURED ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const $ = id => document.getElementById(id);
+let beneficiaries = [], contributions = [], gallery = [], selectedBeneficiary = null, currentUser = null;
+
+function money(n){return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(Number(n||0));}
+function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function dateFmt(s){if(!s)return '—';try{return new Date(s+'T00:00:00').toLocaleDateString('hi-IN')}catch{return s}}
+function notify(id,msg){$(id).textContent=msg;}
+function publicValue(value,show){return show && value ? esc(value) : 'सार्वजनिक नहीं';}
+function placeholderPhoto(){return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="500" height="350"><rect width="100%" height="100%" fill="#e7edf5"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-size="28" fill="#64748b">फोटो उपलब्ध नहीं</text></svg>');}
+function totals(){return beneficiaries.map(b=>({...b,total:contributions.filter(c=>c.beneficiary_id===b.id).reduce((sum,c)=>sum+Number(c.amount||0),0)}));}
+function renderList(){
+ const q=$('searchBox').value.trim().toLowerCase(), campaign=$('campaignFilter').value;
+ const rows=totals().filter(b=>(!campaign||b.campaign===campaign)&&(!q||[b.name,b.address,b.area,b.father_name].some(x=>(x||'').toLowerCase().includes(q))));
+ $('beneficiaryGrid').innerHTML=rows.map(b=>`<article class="card"><button class="profile-open" data-open="${esc(b.id)}"><div class="photo"><img loading="lazy" src="${esc(b.photo_url||placeholderPhoto())}" alt="${esc(b.name)} की फोटो" onerror="this.src='${placeholderPhoto()}'"></div><div class="cardbody"><h3>${esc(b.name)}</h3><div class="sub">${esc(b.area||b.address||'')}</div><div class="amount">प्राप्त कुल राशि: ${money(b.total)}</div><div class="sub">विवरण और सहयोगकर्ताओं की सूची देखें →</div></div></button></article>`).join('');
+ $('listEmpty').classList.toggle('hidden',rows.length>0);
+ document.querySelectorAll('[data-open]').forEach(btn=>btn.addEventListener('click',()=>openBeneficiary(btn.dataset.open)));
+}
+function openBeneficiary(id){
+ const b=beneficiaries.find(x=>x.id===id);if(!b)return;selectedBeneficiary=b;
+ const related=contributions.filter(c=>c.beneficiary_id===id).sort((a,b)=>String(b.contribution_date||b.created_at||'').localeCompare(String(a.contribution_date||a.created_at||'')));
+ const total=related.reduce((s,c)=>s+Number(c.amount||0),0);
+ $('beneficiaryDetail').innerHTML=`<div class="detail-head"><img class="detail-photo" src="${esc(b.photo_url||placeholderPhoto())}" alt="${esc(b.name)} की फोटो" onerror="this.src='${placeholderPhoto()}'"><div><h2>आर्थिक सहयोग</h2><h3>${esc(b.name)}</h3><div class="details">
+ <div class="detailitem"><b>पिता/पति का नाम</b>${esc(b.father_name||'—')}</div>
+ <div class="detailitem"><b>पता</b>${esc(b.address||b.area||'—')}</div>
+ <div class="detailitem"><b>मोबाइल</b>${publicValue(b.mobile,b.show_mobile)}</div>
+ <div class="detailitem"><b>Account No.</b>${publicValue(b.account_no,b.show_account)}</div>
+ <div class="detailitem"><b>UPI ID</b>${publicValue(b.upi_id,b.show_upi)}</div>
+ <div class="detailitem"><b>प्राप्त कुल राशि</b><span class="amount">${money(total)}</span></div>
+ <div class="detailitem"><b>अभियान</b>${b.campaign==='diwali'?'दीपावली सहायता':'सामान्य आर्थिक सहयोग'}</div>
+ </div></div></div>`;
+ $('donorRows').innerHTML=related.map(c=>`<tr><td>${esc(c.contributor_name||'—')}</td><td>${esc(c.contributor_area||'—')}</td><td><b>${money(c.amount)}</b></td><td>${dateFmt(c.contribution_date||c.created_at?.slice(0,10))}</td></tr>`).join('');
+ $('donorEmpty').classList.toggle('hidden',related.length>0);
+ $('listView').classList.add('hidden');$('detailView').classList.remove('hidden');
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function showList(){$('detailView').classList.add('hidden');$('listView').classList.remove('hidden');selectedBeneficiary=null;}
+function renderGallery(){
+ $('galleryGrid').innerHTML=gallery.map(g=>`<article class="card"><div class="photo"><img loading="lazy" src="${esc(g.photo_url)}" alt="${esc(g.caption||'सहायता वितरण फोटो')}" onerror="this.src='${placeholderPhoto()}'"></div><div class="cardbody">${esc(g.caption||'सहायता वितरण')}</div></article>`).join('');
+ $('galleryEmpty').classList.toggle('hidden',gallery.length>0);
+}
+function renderBeneficiarySelect(){
+ const current=$('contributionBeneficiary').value;
+ $('contributionBeneficiary').innerHTML='<option value="">लाभार्थी चुनें</option>'+beneficiaries.map(b=>`<option value="${esc(b.id)}">${esc(b.name)}</option>`).join('');
+ if(beneficiaries.some(b=>b.id===current))$('contributionBeneficiary').value=current;
+}
+async function refresh(){
+ if(!db){$('beneficiaryGrid').innerHTML='';$('listEmpty').classList.remove('hidden');$('listEmpty').textContent='सेटअप अधूरा है: index.html में Supabase Project URL और anon/public key भरें, फिर SQL चलाएँ।';return;}
+ const [b,c,g]=await Promise.all([
+  db.from('beneficiaries').select('*').order('created_at',{ascending:false}),
+  db.from('contributions').select('*').order('created_at',{ascending:false}),
+  db.from('assistance_gallery').select('*').order('created_at',{ascending:false})
+ ]);
+ if(b.error||c.error||g.error){$('listEmpty').classList.remove('hidden');$('listEmpty').textContent='डेटा लोड नहीं हुआ। Supabase SQL, table names और RLS policies जाँचें।';console.error(b.error,c.error,g.error);return;}
+ beneficiaries=b.data||[];contributions=c.data||[];gallery=g.data||[];
+ renderList();renderGallery();renderBeneficiarySelect();
+ if(selectedBeneficiary)openBeneficiary(selectedBeneficiary.id);
+}
+async function setAuthUI(){
+ const {data}=await db.auth.getSession();currentUser=data.session?.user||null;
+ $('signedOut').classList.toggle('hidden',!!currentUser);$('signedIn').classList.toggle('hidden',!currentUser);
+ if(currentUser){
+  const {data:admin,error}=await db.from('admins').select('user_id').eq('user_id',currentUser.id).maybeSingle();
+  if(error||!admin){await db.auth.signOut();currentUser=null;$('signedOut').classList.remove('hidden');$('signedIn').classList.add('hidden');notify('loginStatus','यह ईमेल अधिकृत एडमिन नहीं है।');}
+ }
+}
+async function uploadImage(file,folder){
+ if(!file)return null;
+ if(!file.type.startsWith('image/'))throw new Error('कृपया image file चुनें।');
+ if(file.size>6*1024*1024)throw new Error('फोटो 6 MB से छोटी रखें।');
+ const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-zA-Z0-9]/g,'').slice(0,8)||'jpg';
+ const path=`${folder}/${crypto.randomUUID()}.${ext}`;
+ const {error}=await db.storage.from('helping-hands-photos').upload(path,file,{upsert:false,contentType:file.type});
+ if(error)throw error;
+ const {data}=db.storage.from('helping-hands-photos').getPublicUrl(path);
+ return data.publicUrl;
+}
+$('searchBox').addEventListener('input',renderList);$('campaignFilter').addEventListener('change',renderList);
+$('homeBtn').addEventListener('click',showList);$('backBtn').addEventListener('click',showList);
+$('loginBtn').addEventListener('click',async()=>{
+ if(!db)return;notify('loginStatus','लॉगिन हो रहा है…');
+ const {error}=await db.auth.signInWithPassword({email:$('adminEmail').value.trim(),password:$('adminPassword').value});
+ notify('loginStatus',error?error.message:'');
+ if(!error){await setAuthUI();notify('loginStatus','');}
+});
+$('logoutBtn').addEventListener('click',async()=>{await db.auth.signOut();await setAuthUI();});
+$('resetBeneficiaryBtn').addEventListener('click',()=>{$('beneficiaryForm').reset();$('beneficiaryId').value='';notify('beneficiaryStatus','');});
+$('beneficiaryForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(!db||!currentUser)return notify('beneficiaryStatus','पहले एडमिन लॉगिन करें।');
+ notify('beneficiaryStatus','सेव हो रहा है…');
+ try{
+  const id=$('beneficiaryId').value;let photo_url=null;
+  if($('beneficiaryPhoto').files[0])photo_url=await uploadImage($('beneficiaryPhoto').files[0],'beneficiaries');
+  const record={name:$('beneficiaryName').value.trim(),father_name:$('fatherName').value.trim()||null,address:$('address').value.trim()||null,mobile:$('mobile').value.trim()||null,account_no:$('accountNo').value.trim()||null,upi_id:$('upiId').value.trim()||null,area:$('area').value.trim()||null,campaign:$('campaign').value,show_mobile:$('showMobile').checked,show_account:$('showAccount').checked,show_upi:$('showUpi').checked};
+  if(photo_url)record.photo_url=photo_url;
+  const result=id?await db.from('beneficiaries').update(record).eq('id',id):await db.from('beneficiaries').insert(record);
+  if(result.error)throw result.error;
+  $('beneficiaryForm').reset();$('beneficiaryId').value='';notify('beneficiaryStatus','लाभार्थी की जानकारी सेव हो गई।');await refresh();
+ }catch(err){notify('beneficiaryStatus','त्रुटि: '+err.message);}
+});
+$('contributionForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(!db||!currentUser)return notify('contributionStatus','पहले एडमिन लॉगिन करें।');
+ notify('contributionStatus','सेव हो रहा है…');
+ const record={beneficiary_id:$('contributionBeneficiary').value,contributor_name:$('contributorName').value.trim(),contributor_area:$('contributorArea').value.trim()||null,amount:Number($('contributionAmount').value),contribution_date:$('contributionDate').value||new Date().toISOString().slice(0,10)};
+ const {error}=await db.from('contributions').insert(record);
+ if(error)notify('contributionStatus','त्रुटि: '+error.message);else{$('contributionForm').reset();notify('contributionStatus','सहयोग रिकॉर्ड जोड़ दिया गया।');await refresh();}
+});
+$('galleryForm').addEventListener('submit',async e=>{
+ e.preventDefault();if(!db||!currentUser)return notify('galleryStatus','पहले एडमिन लॉगिन करें।');
+ notify('galleryStatus','फोटो अपलोड हो रही है…');
+ try{const url=await uploadImage($('galleryPhoto').files[0],'gallery');const {error}=await db.from('assistance_gallery').insert({photo_url:url,caption:$('galleryCaption').value.trim()||null});if(error)throw error;$('galleryForm').reset();notify('galleryStatus','फोटो गैलरी में जोड़ दी गई।');await refresh();}
+ catch(err){notify('galleryStatus','त्रुटि: '+err.message);}
+});
+if(db){await setAuthUI();db.auth.onAuthStateChange(()=>setAuthUI());await refresh();}
+else refresh();
+</script>
+</body>
+</html>
