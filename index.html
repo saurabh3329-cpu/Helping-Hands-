@@ -128,8 +128,8 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 // GitHub Pages में publish करने से पहले अपनी Supabase Project URL और anon/public key भरें.
 // कभी भी service_role key यहाँ न डालें.
-const SUPABASE_URL = 'PASTE_SUPABASE_PROJECT_URL_HERE';
-const SUPABASE_ANON_KEY = 'PASTE_SUPABASE_ANON_PUBLIC_KEY_HERE';
+const SUPABASE_URL = 'https://ajzzptohbipntoycqpuq.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'sb_publishable_puGa0q7FK99IiNsdiwgKBQ_ngxeZOtq';
 const CONFIGURED = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('PASTE_') && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes('PASTE_');
 const db = CONFIGURED ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 const $ = id => document.getElementById(id);
